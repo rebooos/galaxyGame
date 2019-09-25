@@ -123,9 +123,14 @@ window.addEventListener('load', function() {
 
 	let enemies = [];
 	let score = 0;
+	let speedEnemieX = 0.5;
+	let speedEnemieY = 10;
 
 	let enemy_ai = (node) => {
-		node.y += 0.1;
+		node.x += speedEnemieX;
+		if (node.x > canvas.width - 30 || node.x < 30) {
+			speedEnemieX = -1 * speedEnemieX;
+		}
 	};
 
 	let bullet_ai = (node) => {
@@ -147,7 +152,7 @@ window.addEventListener('load', function() {
 	
 	for (let j = 0; j < 3; j++ ) {
 		for (let i = 0; i < 10; i++ ) {
-			enemies.push(ENGINE.createNode(120 + (20 + 20) * i, 20 + (20+20)*j, 20, 20, '#ff6d5a', enemy_ai));
+			enemies.push(ENGINE.createNode(120 + (20 + 20) * i, 60 + (20+20)*j, 20, 20, '#ff6d5a', enemy_ai));
 		}
 	}
 	
