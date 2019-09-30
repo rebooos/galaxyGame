@@ -5,6 +5,8 @@ const ENGINE = new function() {
 		nodes = [], nodeCount = 0, timer =0, userDraw, 
 		forDestroy = {}, downKeys = {};
 
+	let levelBackground = ["../galaxyGame/image/bg0.jpg", "../galaxyGame/image/bg1.jpg"];
+
 	let $ = (id) => { return document.getElementById(id)};
 
 	let rect = (x, y, w, h, clr) => {
@@ -30,7 +32,7 @@ const ENGINE = new function() {
 		}
 
 		_update() {
-			if (this.update)
+			if (typeof this.update === 'function')
 				this.update(this); 
 		}
 
@@ -100,19 +102,26 @@ const ENGINE = new function() {
 	ENGINE.start = (W, H) => {
 		canvas = $('canvas');
 		context = canvas.getContext('2d');
+
+		background = new Image();
+		background.src = levelBackground[0];
+
 		width = W;
 		height = H;
 		canvas.width = width;
 		canvas.height = height;
-		context.textBaseLine = 'top';
-		context.font = '20px';
 
+		background.onload = () => {
+			context.drawImage(background,0,0, 300, 300);
+		};
+	    
 		window.addEventListener('keydown', (e) => {
 			downKeys[e.code] = true;
-		})
+		});
+
 		window.addEventListener('keyup', (e) => {
 			downKeys[e.code] = false;
-		})
+		});
 
 		ENGINE.update();
 	};
@@ -125,6 +134,8 @@ window.addEventListener('load', function() {
 	let score = 0;
 	let speedEnemieX = 0.5;
 	let speedEnemieY = 10;
+	let upperLine = 60;
+	let bottomLine = 120;
 
 	let enemy_ai = (node) => {
 		node.x += speedEnemieX;
@@ -144,7 +155,7 @@ window.addEventListener('load', function() {
 				enemies[i].destroy();
 				node.destroy();
 				enemies.splice(i, 1);
-				score += 10;
+				score += 100;
 				break;	
 			}
 		}
@@ -152,12 +163,12 @@ window.addEventListener('load', function() {
 	
 	for (let j = 0; j < 3; j++ ) {
 		for (let i = 0; i < 10; i++ ) {
-			enemies.push(ENGINE.createNode(120 + (20 + 20) * i, 60 + (20+20)*j, 20, 20, '#ff6d5a', enemy_ai));
+			enemies.push(ENGINE.createNode(bottomLine + (20 + 20) * i, upperLine + (20+20)*j, 20, 20, '#ff6d5a', enemy_ai));
 		}
 	}
 	
 	let fire = (x, y) => {
-		if (ENGINE.getTimer() > 15) {
+		if (ENGINE.getTimer() > 100) {
 			ENGINE.createNode(x, y, 10, 20, '#14ff00', bullet_ai);
 			ENGINE.clearTimer();
 		}
